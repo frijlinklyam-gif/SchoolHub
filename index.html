@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School Hub - Esmoreit</title>
+    <title>School Hub - Cloud Versie</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -27,6 +27,17 @@
             border: 6px solid #f8fafc;
         }
 
+        .btn-student-choice {
+            background-color: #3b82f6 !important;
+            color: #ffffff !important;
+        }
+
+        .btn-teacher-choice {
+            background-color: #f1f5f9 !important;
+            color: #475569 !important;
+            border: 2px solid #e2e8f0;
+        }
+
         .action-card {
             transition: all 0.2s ease;
         }
@@ -39,19 +50,38 @@
         .code-input {
             letter-spacing: 0.5em;
             text-align: center;
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: bold;
+            color: #3b82f6;
         }
 
-        /* Animatie voor de alert */
         .pulse-bg {
-            animation: pulse-red 2s infinite;
+            animation: pulse-red 1.5s infinite;
         }
 
         @keyframes pulse-red {
-            0% { background-color: rgba(225, 29, 72, 0.95); }
-            50% { background-color: rgba(159, 18, 57, 0.98); }
-            100% { background-color: rgba(225, 29, 72, 0.95); }
+            0% { background-color: #e11d48; }
+            50% { background-color: #fb7185; }
+            100% { background-color: #e11d48; }
+        }
+
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Custom alert animation */
+        @keyframes slideDown {
+            from { transform: translate(-50%, -100%); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+        .alert-animate {
+            animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
     </style>
 </head>
@@ -61,388 +91,392 @@
     <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4 kids-gradient">
         <div class="max-w-md w-full space-y-8">
             <div class="text-center text-white mb-8">
-                <div class="w-20 h-20 bg-white rounded-3xl flex items-center justify-center text-blue-500 text-4xl mx-auto mb-4 shadow-xl">
-                    <i class="fas fa-graduation-cap"></i>
+                <div class="w-24 h-24 bg-white rounded-3xl flex items-center justify-center text-blue-500 text-5xl mx-auto mb-4 shadow-2xl floating">
+                    <i class="fas fa-rocket"></i>
                 </div>
-                <h1 class="text-4xl font-bold tracking-tight">School Hub</h1>
-                <p class="opacity-90 font-medium text-lg">Esmoreit Live Portaal</p>
+                <h1 class="text-5xl font-bold tracking-tight">School Hub</h1>
+                <p class="opacity-95 font-medium text-xl">Welkom op het Esmoreit portaal!</p>
             </div>
 
-            <!-- STAP 1: KEUZE SCHERM -->
-            <div id="auth-choice" class="auth-card p-8 space-y-4">
-                <h2 class="text-xl font-bold text-slate-800 text-center mb-6">Wie ben jij?</h2>
+            <!-- ROL KEUZE -->
+            <div id="auth-choice" class="auth-card p-8 space-y-6">
+                <h2 class="text-2xl font-bold text-slate-800 text-center mb-6">Wie ben jij?</h2>
                 
-                <button onclick="selectInitialRole('student')" class="w-full bg-blue-500 hover:bg-blue-600 text-white p-6 rounded-2xl font-bold text-xl shadow-lg transition-all flex items-center justify-between group">
-                    <span>Ik ben een leerling</span>
-                    <i class="fas fa-child"></i>
+                <button onclick="selectInitialRole('student')" class="btn-student-choice w-full p-8 rounded-3xl font-bold text-2xl shadow-lg transition-all flex items-center justify-between group">
+                    <div class="flex flex-col items-start text-left">
+                        <span>Leerling</span>
+                        <span class="text-xs font-normal opacity-80">Huiswerk & opdrachten</span>
+                    </div>
+                    <i class="fas fa-child text-3xl"></i>
                 </button>
 
                 <div class="relative py-2">
-                    <div class="absolute inset-0 flex items-center"><span class="w-full border-t border-slate-100"></span></div>
-                    <div class="relative flex justify-center text-xs uppercase"><span class="bg-white px-2 text-slate-400 font-bold">Of</span></div>
+                    <div class="absolute inset-0 flex items-center"><span class="w-full border-t-2 border-slate-100"></span></div>
+                    <div class="relative flex justify-center text-sm uppercase"><span class="bg-white px-4 text-slate-400 font-bold tracking-widest">OF</span></div>
                 </div>
 
-                <button onclick="selectInitialRole('teacher')" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white p-5 rounded-2xl font-bold text-lg shadow-md transition-all flex items-center justify-between group">
-                    <span>Ik ben een leraar</span>
+                <button onclick="selectInitialRole('teacher')" class="btn-teacher-choice w-full p-6 rounded-3xl font-bold text-xl shadow-md transition-all flex items-center justify-between group">
+                    <span>Meester / Juf</span>
                     <i class="fas fa-user-tie"></i>
                 </button>
             </div>
 
-            <!-- LOGIN/REGISTRATIE LERAAR KEUZE -->
-            <div id="auth-sub-choice-teacher" class="auth-card p-8 space-y-4 hidden-section">
-                <h2 class="text-xl font-bold text-slate-800 text-center mb-6">Leraar Portaal</h2>
-                <button onclick="showAuthMode('login-form-teacher')" class="w-full bg-slate-800 text-white p-5 rounded-2xl font-bold text-lg shadow-lg">Inloggen</button>
-                <button onclick="showAuthMode('register-screen-teacher')" class="w-full border-2 border-slate-200 text-slate-600 p-5 rounded-2xl font-bold text-lg hover:bg-slate-50">Nieuw account maken</button>
-                <button onclick="showAuthMode('auth-choice')" class="w-full text-slate-400 font-bold text-xs uppercase pt-2 text-center">Terug</button>
-            </div>
-
-            <!-- LOGIN LEERLING (CODE) -->
+            <!-- LEERLING: KLASCODE INVOER -->
             <div id="login-form-student" class="auth-card p-8 space-y-6 hidden-section">
                 <div class="text-center">
-                    <h2 class="text-2xl font-bold text-slate-800">Leerling Login</h2>
-                    <p class="text-slate-400 text-sm">Voer je 6-cijferige code in</p>
+                    <h2 class="text-3xl font-bold text-slate-800">Hallo! 👋</h2>
+                    <p class="text-slate-500 font-medium">Typ de code van de klas:</p>
                 </div>
-                <div class="space-y-4">
-                    <input type="text" id="student-code" maxlength="6" placeholder="000000" class="w-full p-4 rounded-2xl bg-slate-50 border-2 border-blue-100 outline-none focus:border-blue-400 transition-all code-input">
-                </div>
-                <button onclick="handleStudentLogin()" class="w-full bg-blue-500 hover:bg-blue-600 text-white p-5 rounded-2xl font-bold text-lg shadow-lg">Starten</button>
+                <input type="text" id="student-class-code" maxlength="6" placeholder="000000" class="w-full p-6 rounded-3xl bg-blue-50 border-4 border-blue-100 outline-none focus:border-blue-400 transition-all code-input shadow-inner">
+                <button onclick="verifyClassCode()" class="w-full bg-blue-500 hover:bg-blue-600 text-white p-6 rounded-3xl font-bold text-2xl shadow-xl transform active:scale-95 transition-transform">Volgende ➡️</button>
                 <button onclick="showAuthMode('auth-choice')" class="w-full text-slate-400 font-bold text-xs uppercase pt-2 text-center">Terug</button>
             </div>
 
-            <!-- LOGIN LERAAR FORM -->
-            <div id="login-form-teacher" class="auth-card p-8 space-y-6 hidden-section">
-                <h2 class="text-2xl font-bold text-slate-800 text-center">Leraar Login</h2>
-                <div class="space-y-4">
-                    <input type="email" id="teacher-email" placeholder="Emailadres" class="w-full p-4 rounded-xl bg-slate-50 border-2 outline-none focus:border-emerald-300">
-                    <input type="password" id="teacher-pass" placeholder="Wachtwoord" class="w-full p-4 rounded-xl bg-slate-50 border-2 outline-none focus:border-emerald-300">
-                </div>
-                <button onclick="handleTeacherLogin()" class="w-full bg-emerald-500 text-white p-5 rounded-2xl font-bold shadow-lg">Inloggen</button>
-                <button onclick="showAuthMode('auth-sub-choice-teacher')" class="text-slate-400 w-full text-center text-xs pt-4 font-bold">TERUG</button>
+            <!-- LEERLING: NAAM KIEZEN -->
+            <div id="student-select-name" class="auth-card p-8 space-y-6 hidden-section">
+                <h2 class="text-2xl font-bold text-slate-800 text-center">Wie ben jij?</h2>
+                <div id="student-names-grid" class="grid grid-cols-1 gap-3 max-h-64 overflow-y-auto pr-2"></div>
+                <button onclick="showAuthMode('login-form-student')" class="w-full text-slate-400 font-bold text-xs uppercase pt-2 text-center">Terug naar code</button>
             </div>
 
-            <!-- REGISTRATIE LERAAR FORM -->
-            <div id="register-screen-teacher" class="auth-card p-8 space-y-5 hidden-section">
-                <h2 class="text-2xl font-bold text-slate-800 text-center">Account Maken</h2>
-                <div class="space-y-3">
-                    <input type="text" id="reg-teacher-name" placeholder="Naam (bijv. Meester Jan)" class="w-full p-4 rounded-xl bg-slate-50 border-2 outline-none focus:border-emerald-300">
-                    <input type="email" id="reg-teacher-email" placeholder="Emailadres" class="w-full p-4 rounded-xl bg-slate-50 border-2 outline-none focus:border-emerald-300">
-                    <input type="password" id="reg-teacher-pass" placeholder="Kies wachtwoord" class="w-full p-4 rounded-xl bg-slate-50 border-2 outline-none focus:border-emerald-300">
+            <!-- LERAAR LOGIN / REGISTRATIE -->
+            <div id="login-form-teacher" class="auth-card p-8 space-y-6 hidden-section">
+                <h2 class="text-2xl font-bold text-slate-800 text-center">Leraar Portaal</h2>
+                <p class="text-center text-slate-500 text-sm">Vul je e-mail en een wachtwoord in (min. 6 tekens) om in te loggen of je aan te melden.</p>
+                <div class="space-y-4">
+                    <input type="email" id="teacher-email" placeholder="Emailadres" class="w-full p-4 rounded-xl bg-slate-50 border-2 outline-none focus:border-blue-300">
+                    <input type="password" id="teacher-pass" placeholder="Wachtwoord" class="w-full p-4 rounded-xl bg-slate-50 border-2 outline-none focus:border-blue-300">
                 </div>
-                <button onclick="handleTeacherRegister()" class="w-full bg-emerald-500 text-white p-5 rounded-2xl font-bold shadow-lg">Registreren</button>
-                <button onclick="showAuthMode('auth-sub-choice-teacher')" class="text-slate-400 w-full text-center text-xs pt-4 font-bold">TERUG</button>
+                <button id="teacher-auth-btn" onclick="handleTeacherAuth()" class="w-full bg-blue-500 text-white p-5 rounded-2xl font-bold shadow-lg flex items-center justify-center gap-2">
+                    <span id="btn-text">Starten! 🚀</span>
+                </button>
+                <button onclick="showAuthMode('auth-choice')" class="text-slate-400 w-full text-center text-xs pt-4 font-bold uppercase">Terug</button>
             </div>
         </div>
     </div>
 
     <!-- MAIN APP INTERFACE -->
     <div id="app-content" class="hidden-section">
-        <header class="bg-white border-b-4 border-blue-400 sticky top-0 z-50 shadow-sm">
-            <div class="max-w-6xl mx-auto px-4 flex justify-between h-20 items-center">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 kids-gradient rounded-xl flex items-center justify-center text-white text-xl">
-                        <i class="fas fa-rocket"></i>
+        <header class="bg-white border-b-8 border-blue-400 sticky top-0 z-50 shadow-sm">
+            <div class="max-w-6xl mx-auto px-4 flex justify-between h-24 items-center">
+                <div class="flex items-center gap-3 cursor-pointer" onclick="backToHub()">
+                    <div class="w-12 h-12 kids-gradient rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg">
+                        <i class="fas fa-graduation-cap"></i>
                     </div>
-                    <span class="font-bold text-xl text-slate-800">School Hub</span>
+                    <div>
+                        <span class="font-bold text-2xl text-slate-800 block leading-none">School Hub</span>
+                        <span class="text-[10px] font-bold text-blue-400 uppercase tracking-tighter">Esmoreit Basisschool</span>
+                    </div>
                 </div>
                 <div class="flex items-center gap-4">
-                    <div class="text-right">
-                        <p class="text-sm font-bold text-slate-700" id="display-user-name">...</p>
+                    <div class="text-right hidden sm:block">
+                        <p class="text-base font-bold text-slate-700" id="display-user-name">...</p>
                         <p class="text-[10px] text-blue-500 font-bold uppercase tracking-widest" id="display-user-role">...</p>
                     </div>
-                    <button onclick="logout()" class="w-10 h-10 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center hover:bg-red-50 hover:text-red-500 transition-all">
-                        <i class="fas fa-power-off"></i>
+                    <button onclick="logout()" class="w-12 h-12 rounded-2xl bg-red-50 text-red-500 flex items-center justify-center">
+                        <i class="fas fa-sign-out-alt"></i>
                     </button>
                 </div>
             </div>
         </header>
 
         <main class="max-w-6xl mx-auto p-6">
-            <div id="hub-main" class="bg-white p-8 rounded-[2.5rem] border-4 border-blue-50 shadow-sm">
-                <h1 class="text-3xl font-bold text-slate-800 mb-8">Welkom, <span id="welcome-name" class="text-blue-500">...</span>!</h1>
+            <div id="hub-main" class="bg-white p-8 rounded-[3rem] border-8 border-blue-50 shadow-xl">
+                <div class="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
+                    <h1 class="text-4xl font-black text-slate-800">Hoi, <span id="welcome-name" class="text-blue-500">...</span>! ✨</h1>
+                    <div id="date-display" class="bg-blue-50 px-6 py-2 rounded-full text-blue-600 font-bold text-sm">...</div>
+                </div>
 
-                <!-- DASHBOARD LERAAR -->
                 <div id="teacher-actions" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 hidden-section">
-                    <div onclick="openModule('beheer')" class="action-card p-6 bg-purple-50 rounded-3xl border-2 border-purple-100 cursor-pointer text-center">
-                        <i class="fas fa-id-card text-4xl text-purple-500 mb-4"></i>
-                        <h3 class="font-bold text-slate-800">Leerling Codes</h3>
-                    </div>
-                    <div onclick="openModule('huiswerk')" class="action-card p-6 bg-orange-50 rounded-3xl border-2 border-orange-100 cursor-pointer text-center">
-                        <i class="fas fa-book-open text-4xl text-orange-500 mb-4"></i>
-                        <h3 class="font-bold text-slate-800">Huiswerk</h3>
-                    </div>
-                    <div onclick="openModule('opdrachten')" class="action-card p-6 bg-blue-50 rounded-3xl border-2 border-blue-100 cursor-pointer text-center">
-                        <i class="fas fa-tasks text-4xl text-blue-500 mb-4"></i>
-                        <h3 class="font-bold text-slate-800">Opdrachten</h3>
-                    </div>
-                    <div onclick="openModule('live')" class="action-card p-6 bg-rose-50 rounded-3xl border-2 border-rose-100 cursor-pointer text-center">
-                        <i class="fas fa-broadcast-tower text-4xl text-rose-500 mb-4"></i>
-                        <h3 class="font-bold text-slate-800">Live Focus</h3>
+                    <div onclick="openModule('beheer')" class="action-card p-8 bg-purple-50 rounded-[2.5rem] border-4 border-purple-100 cursor-pointer text-center">
+                        <div class="w-16 h-16 bg-purple-500 text-white rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4 shadow-lg"><i class="fas fa-users"></i></div>
+                        <h3 class="font-bold text-xl text-slate-800">Klasbeheer</h3>
+                        <p class="text-xs text-slate-500 mt-2">Voeg leerlingen toe</p>
                     </div>
                 </div>
 
-                <!-- DASHBOARD LEERLING -->
-                <div id="student-view" class="space-y-8 hidden-section">
-                    <div>
-                        <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-                            <i class="fas fa-tasks text-blue-500"></i> Jouw Opdrachten
-                        </h2>
-                        <div id="tasks-list" class="grid gap-4"></div>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-                            <i class="fas fa-home text-orange-500"></i> Huiswerk
-                        </h2>
-                        <div id="homework-list" class="grid gap-4"></div>
+                <div id="student-view" class="grid grid-cols-1 lg:grid-cols-2 gap-10 hidden-section">
+                    <div class="space-y-6">
+                        <h2 class="text-2xl font-black text-slate-800 flex items-center gap-3"><i class="fas fa-tasks text-blue-500"></i> Mijn Taken</h2>
+                        <div id="tasks-list" class="space-y-4 text-center p-8 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200 text-slate-400 font-bold">
+                            Nog geen taken vandaag!
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- MODULES -->
-            <div id="module-beheer" class="hidden-section space-y-4">
-                <button onclick="backToHub()" class="p-4 bg-white rounded-xl shadow-sm font-bold text-slate-500"><i class="fas fa-arrow-left mr-2"></i>Terug</button>
-                <div class="bg-white p-8 rounded-3xl border-4 border-purple-50">
-                    <h2 class="text-2xl font-bold mb-6">Inlogcodes van de Klas</h2>
-                    <div id="codes-list" class="grid gap-4"></div>
-                </div>
-            </div>
-
-            <div id="module-opdrachten" class="hidden-section space-y-4">
-                <button onclick="backToHub()" class="p-4 bg-white rounded-xl shadow-sm font-bold text-slate-500"><i class="fas fa-arrow-left mr-2"></i>Terug</button>
-                <div class="bg-white p-8 rounded-3xl border-4 border-blue-50 space-y-4">
-                    <h2 class="text-2xl font-bold text-blue-600">Nieuwe Opdracht Geven</h2>
-                    <input type="text" id="task-title-input" placeholder="Titel van de opdracht" class="w-full p-4 border rounded-xl font-medium">
-                    <textarea id="task-desc-input" placeholder="Wat moeten de leerlingen doen?" class="w-full p-4 border rounded-xl h-24 font-medium"></textarea>
-                    <button onclick="addTask()" class="w-full p-4 bg-blue-500 text-white rounded-xl font-bold shadow-lg">Verstuur naar Klas</button>
-                </div>
-            </div>
-
-            <div id="module-huiswerk" class="hidden-section space-y-4">
-                <button onclick="backToHub()" class="p-4 bg-white rounded-xl shadow-sm font-bold text-slate-500"><i class="fas fa-arrow-left mr-2"></i>Terug</button>
-                <div class="bg-white p-8 rounded-3xl border-4 border-orange-50 space-y-4">
-                    <h2 class="text-2xl font-bold text-orange-600">Huiswerk Inplannen</h2>
-                    <input type="text" id="hw-title" placeholder="Vak en onderwerp" class="w-full p-4 border rounded-xl font-medium">
-                    <input type="date" id="hw-date" class="w-full p-4 border rounded-xl font-medium">
-                    <button onclick="addHomework()" class="w-full p-4 bg-orange-500 text-white rounded-xl font-bold shadow-lg">Publiceren</button>
-                </div>
-            </div>
-            
-            <div id="module-live" class="hidden-section space-y-4 text-center">
-                 <button onclick="backToHub()" class="p-4 bg-white rounded-xl shadow-sm font-bold text-slate-500"><i class="fas fa-arrow-left mr-2"></i>Terug</button>
-                 <div class="bg-white p-8 rounded-3xl border-4 border-rose-50 p-8 space-y-6">
-                    <h2 class="text-2xl font-bold text-rose-600">Live Focus Instellen</h2>
-                    
-                    <div class="text-left space-y-2">
-                        <label class="font-bold text-slate-600 ml-2">Bericht op leerling-scherm:</label>
-                        <input type="text" id="live-text-input" placeholder="Ogen op de leraar! 👀" class="w-full p-4 border-2 border-rose-100 rounded-2xl outline-none focus:border-rose-400">
+            <div id="module-beheer" class="hidden-section space-y-6">
+                <button onclick="backToHub()" class="flex items-center gap-2 font-bold text-blue-500"><i class="fas fa-arrow-left"></i> Terug naar overzicht</button>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white p-8 rounded-[3rem] border-8 border-purple-50">
+                        <h2 class="text-2xl font-black text-purple-600 mb-6">Klas Toegang</h2>
+                        <div class="bg-slate-800 p-6 rounded-2xl text-center mb-6">
+                            <p class="text-slate-400 text-xs uppercase font-bold tracking-widest mb-2">Klascode voor leerlingen</p>
+                            <h3 class="text-5xl font-black text-white tracking-[0.2em]" id="current-class-code">......</h3>
+                        </div>
+                        <div class="space-y-4">
+                            <h3 class="font-bold text-slate-700">Leerling toevoegen:</h3>
+                            <div class="flex gap-2">
+                                <input type="text" id="new-student-name" placeholder="Naam leerling..." class="flex-1 p-4 border-2 rounded-xl outline-none focus:border-purple-400">
+                                <button onclick="addNewStudent()" class="bg-purple-500 text-white px-6 rounded-xl font-bold"><i class="fas fa-plus"></i></button>
+                            </div>
+                        </div>
                     </div>
-
-                    <button onclick="broadcastAlertFromInput()" class="w-full p-8 bg-rose-500 text-white rounded-3xl font-bold text-2xl shadow-xl hover:scale-[1.02] transition-transform flex items-center justify-center gap-4">
-                        <span>BEVRIES SCHERMEN</span>
-                        <i class="fas fa-broadcast-tower"></i>
-                    </button>
-                    <p class="text-slate-400 text-sm italic">De Chromebooks van de leerlingen worden direct geblokkeerd met jouw tekst.</p>
-                 </div>
+                    <div class="bg-white p-8 rounded-[3rem] border-8 border-slate-50">
+                        <h2 class="text-2xl font-black text-slate-800 mb-6">Mijn Klaslijst</h2>
+                        <div id="admin-student-list" class="space-y-2"></div>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
 
-    <!-- LIVE ALERT OVERLAY (VOOR LEERLINGEN) -->
-    <div id="live-alert" class="fixed inset-0 z-[100] flex items-center justify-center pulse-bg hidden-section backdrop-blur-md">
-        <div class="text-center text-white p-8 max-w-2xl">
-            <div class="text-8xl mb-8 animate-bounce">📢</div>
-            <h2 id="alert-text" class="text-5xl font-black mb-10 tracking-tight uppercase leading-tight">Ogen op de leraar!</h2>
-            <button onclick="closeAlert()" class="bg-white text-rose-600 px-16 py-6 rounded-3xl font-black text-2xl shadow-2xl hover:scale-105 transition-transform active:scale-95">
-                IK LUISTER!
-            </button>
+    <!-- LIVE ALERT OVERLAY -->
+    <div id="live-alert" class="fixed inset-0 z-[100] flex items-center justify-center pulse-bg hidden-section backdrop-blur-xl">
+        <div class="text-center text-white p-10 max-w-4xl">
+            <div class="text-9xl mb-12 floating">📢</div>
+            <h2 id="alert-text" class="text-7xl font-black mb-12 uppercase italic leading-tight">Let op de leraar!</h2>
+            <button onclick="closeAlert()" class="bg-white text-rose-600 px-20 py-8 rounded-[2.5rem] font-black text-3xl shadow-2xl">GELEZEN ✅</button>
         </div>
     </div>
 
-    <script>
-        // Database laden of initialiseren
-        let users = JSON.parse(localStorage.getItem('sh_db')) || {
-            teachers: [],
-            students: [
-                { id: "s1", name: "Lucas", code: "123456", tasks: [], homework: [] },
-                { id: "s2", name: "Sophie", code: "654321", tasks: [], homework: [] },
-                { id: "s3", name: "Daan", code: "111222", tasks: [], homework: [] }
-            ]
-        };
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, updateDoc, arrayUnion, query, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        let currentUser = null;
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'school-hub-v2';
+
+        let currentUser = null; 
+        let currentClassData = null; 
         let currentRole = null;
 
-        function showAuthMode(id) {
-            ['auth-choice', 'auth-sub-choice-teacher', 'login-form-student', 'login-form-teacher', 'register-screen-teacher'].forEach(s => {
-                document.getElementById(s).classList.add('hidden-section');
-            });
-            document.getElementById(id).classList.remove('hidden-section');
-        }
-
-        function selectInitialRole(role) {
-            currentRole = role;
-            showAuthMode(role === 'student' ? 'login-form-student' : 'auth-sub-choice-teacher');
-        }
-
-        function handleTeacherRegister() {
-            const name = document.getElementById('reg-teacher-name').value;
-            const email = document.getElementById('reg-teacher-email').value.toLowerCase().trim();
-            const pass = document.getElementById('reg-teacher-pass').value;
-            if(!name || !email || !pass) return alert("Vul alles in!");
+        // VERBETERDE CUSTOM ALERT
+        window.customAlert = (title, msg, type = 'error') => {
+            const existing = document.getElementById('custom-alert-box');
+            if (existing) existing.remove();
             
-            const newTeacher = { name, email, pass };
-            users.teachers.push(newTeacher);
-            saveDB();
-            currentUser = newTeacher;
-            currentRole = 'teacher';
-            startApp();
-        }
+            const div = document.createElement('div');
+            div.id = 'custom-alert-box';
+            div.className = `fixed top-6 left-1/2 transform -translate-x-1/2 ${type === 'error' ? 'bg-rose-600' : 'bg-blue-600'} text-white px-8 py-6 rounded-[2rem] font-medium shadow-2xl z-[999] text-center border-4 border-white max-w-sm w-full alert-animate`;
+            div.innerHTML = `
+                <div class="text-3xl mb-2">${type === 'error' ? '⚠️' : 'ℹ️'}</div>
+                <div class="font-bold text-xl mb-1">${title}</div>
+                <div class="text-sm opacity-90">${msg}</div>
+                <button onclick="this.parentElement.remove()" class="mt-4 bg-white/20 hover:bg-white/30 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest">Sluiten</button>
+            `;
+            document.body.appendChild(div);
+        };
 
-        function handleTeacherLogin() {
+        const initAuth = async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (err) {
+                if (err.code === 'auth/operation-not-allowed') {
+                    window.customAlert("Configuratie nodig", "Zet 'Anonymous' en 'Email/Password' aan in je Firebase Authentication console.");
+                }
+            }
+        };
+        initAuth();
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user && !user.isAnonymous) {
+                const classRef = doc(db, 'artifacts', appId, 'public', 'data', 'classes', user.uid);
+                const snap = await getDoc(classRef);
+                if (snap.exists()) {
+                    currentClassData = snap.data();
+                    currentUser = { name: currentClassData.teacherName, id: user.uid };
+                    currentRole = 'teacher';
+                    startApp();
+                    startClassListener(user.uid);
+                }
+            }
+        });
+
+        window.selectInitialRole = (role) => {
+            currentRole = role;
+            showAuthMode(role === 'student' ? 'login-form-student' : 'login-form-teacher');
+        };
+
+        window.handleTeacherAuth = async () => {
             const email = document.getElementById('teacher-email').value.toLowerCase().trim();
             const pass = document.getElementById('teacher-pass').value;
-            const teacher = users.teachers.find(t => t.email === email && t.pass === pass);
-            if(teacher) {
-                currentUser = teacher;
-                currentRole = 'teacher';
-                startApp();
-            } else alert("Inloggegevens kloppen niet.");
+            const btnText = document.getElementById('btn-text');
+            const btn = document.getElementById('teacher-auth-btn');
+
+            if (!email || pass.length < 6) {
+                window.customAlert("Oeps!", "Vul een echt e-mailadres in en een wachtwoord van minstens 6 letters/cijfers.");
+                return;
+            }
+
+            btn.disabled = true;
+            btnText.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Bezig...';
+
+            try {
+                let user;
+                try {
+                    const res = await signInWithEmailAndPassword(auth, email, pass);
+                    user = res.user;
+                } catch (err) {
+                    if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
+                        const res = await createUserWithEmailAndPassword(auth, email, pass);
+                        user = res.user;
+                        
+                        const code = Math.floor(100000 + Math.random() * 900000).toString();
+                        const classData = {
+                            teacherName: email.split('@')[0],
+                            email: email,
+                            classCode: code,
+                            students: [],
+                            liveAlert: null,
+                            teacherId: user.uid,
+                            createdAt: new Date().toISOString()
+                        };
+                        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'classes', user.uid), classData);
+                    } else if (err.code === 'auth/operation-not-allowed') {
+                        throw new Error("Log even in op de Firebase Console en zet 'Email/Password' aan bij Authentication!");
+                    } else {
+                        throw err;
+                    }
+                }
+
+                const snap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'classes', user.uid));
+                if (snap.exists()) {
+                    currentClassData = snap.data();
+                    currentUser = { name: currentClassData.teacherName, id: user.uid };
+                    currentRole = 'teacher';
+                    startApp();
+                    startClassListener(user.uid);
+                }
+            } catch (err) {
+                window.customAlert("Foutje", err.message);
+            } finally {
+                btn.disabled = false;
+                btnText.innerHTML = 'Starten! 🚀';
+            }
+        };
+
+        window.verifyClassCode = async () => {
+            const code = document.getElementById('student-class-code').value.trim();
+            if (!code) { window.customAlert("Code nodig", "Typ eerst de 6 cijfers van je klas."); return; }
+
+            try {
+                const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'classes'));
+                let found = null;
+                snap.forEach(d => { if (d.data().classCode === code) found = d.data(); });
+
+                if (found) {
+                    currentClassData = found;
+                    renderStudentNameSelect();
+                    showAuthMode('student-select-name');
+                } else {
+                    window.customAlert("Niet gevonden", "Deze code klopt niet. Vraag de meester om de code op zijn bord.");
+                }
+            } catch (err) {
+                window.customAlert("Verbindingsfout", "Kan de klas niet vinden. Probeer het over een minuutje weer.");
+            }
+        };
+
+        function renderStudentNameSelect() {
+            const grid = document.getElementById('student-names-grid');
+            grid.innerHTML = "";
+            const students = currentClassData.students || [];
+            if (students.length === 0) {
+                grid.innerHTML = "<p class='text-center text-slate-400 py-4'>De meester heeft je naam nog niet toegevoegd.</p>";
+                return;
+            }
+            students.forEach(s => {
+                const btn = document.createElement('button');
+                btn.className = "w-full p-5 bg-slate-50 border-2 border-slate-100 rounded-3xl font-bold text-left hover:bg-blue-50 hover:border-blue-200 transition-all flex items-center justify-between";
+                btn.innerHTML = `<span>${s.name}</span> <i class="fas fa-chevron-right text-blue-300"></i>`;
+                btn.onclick = () => { 
+                    currentUser = s; 
+                    currentRole = 'student'; 
+                    startApp(); 
+                    startClassListener(currentClassData.teacherId);
+                };
+                grid.appendChild(btn);
+            });
         }
 
-        function handleStudentLogin() {
-            const code = document.getElementById('student-code').value;
-            const student = users.students.find(s => s.code === code);
-            if(student) {
-                currentUser = student;
-                currentRole = 'student';
-                startApp();
-            } else alert("Code niet gevonden.");
+        function startClassListener(teacherId) {
+            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'classes', teacherId), (docSnap) => {
+                if (docSnap.exists()) {
+                    currentClassData = docSnap.data();
+                    if (currentRole === 'teacher') renderAdminStudentList();
+                    else {
+                        const alertBox = document.getElementById('live-alert');
+                        if (currentClassData.liveAlert) {
+                            document.getElementById('alert-text').innerText = currentClassData.liveAlert.msg;
+                            alertBox.classList.remove('hidden-section');
+                        } else alertBox.classList.add('hidden-section');
+                    }
+                }
+            }, (err) => { console.error("Listener error:", err); });
         }
 
-        function startApp() {
+        window.renderAdminStudentList = () => {
+            const list = document.getElementById('admin-student-list');
+            list.innerHTML = "";
+            (currentClassData.students || []).forEach(s => {
+                const div = document.createElement('div');
+                div.className = "p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl font-bold flex justify-between items-center shadow-sm";
+                div.innerHTML = `<span>${s.name}</span> <i class="fas fa-check-circle text-green-400"></i>`;
+                list.appendChild(div);
+            });
+            document.getElementById('current-class-code').innerText = currentClassData.classCode;
+        };
+
+        window.addNewStudent = async () => {
+            const name = document.getElementById('new-student-name').value.trim();
+            if (!name) return;
+            try {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'classes', currentClassData.teacherId), {
+                    students: arrayUnion({ id: 's' + Date.now(), name, tasks: [] })
+                });
+                document.getElementById('new-student-name').value = "";
+            } catch (err) { window.customAlert("Fout", "Kon leerling niet toevoegen."); }
+        };
+
+        window.startApp = () => {
             document.getElementById('auth-screen').classList.add('hidden-section');
             document.getElementById('app-content').classList.remove('hidden-section');
             document.getElementById('display-user-name').innerText = currentUser.name;
-            document.getElementById('display-user-role').innerText = currentRole === 'teacher' ? 'Leraar' : 'Leerling';
+            document.getElementById('display-user-role').innerText = currentRole === 'teacher' ? 'Meester/Juf' : 'Leerling';
             document.getElementById('welcome-name').innerText = currentUser.name;
-
-            if(currentRole === 'teacher') {
+            document.getElementById('date-display').innerText = new Date().toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' });
+            
+            if (currentRole === 'teacher') {
                 document.getElementById('teacher-actions').classList.remove('hidden-section');
                 document.getElementById('student-view').classList.add('hidden-section');
             } else {
                 document.getElementById('teacher-actions').classList.add('hidden-section');
                 document.getElementById('student-view').classList.remove('hidden-section');
-                renderStudentHub();
             }
-        }
+        };
 
-        function addTask() {
-            const title = document.getElementById('task-title-input').value;
-            const desc = document.getElementById('task-desc-input').value;
-            if(!title) return alert("Geef de opdracht een titel.");
-            
-            const task = { id: Date.now(), title, desc, done: false };
-            users.students.forEach(s => s.tasks.push(task));
-            saveDB();
-            alert("Opdracht verzonden naar alle leerlingen!");
-            backToHub();
-        }
-
-        function addHomework() {
-            const title = document.getElementById('hw-title').value;
-            const date = document.getElementById('hw-date').value;
-            if(!title || !date) return alert("Vul titel en datum in.");
-            
-            const hw = { id: Date.now(), title, date };
-            users.students.forEach(s => s.homework.push(hw));
-            saveDB();
-            alert("Huiswerk geplaatst!");
-            backToHub();
-        }
-
-        function renderStudentHub() {
-            const tl = document.getElementById('tasks-list'); tl.innerHTML = "";
-            currentUser.tasks.slice().reverse().forEach(t => {
-                tl.innerHTML += `
-                    <div class="p-5 border-2 rounded-3xl flex justify-between items-center ${t.done ? 'bg-emerald-50 border-emerald-100 opacity-60' : 'bg-white border-blue-100 shadow-sm'}">
-                        <div>
-                            <p class="font-bold text-slate-800">${t.title}</p>
-                            <p class="text-xs text-slate-500">${t.desc || ''}</p>
-                        </div>
-                        <button onclick="submitTask(${t.id})" class="px-6 py-2 rounded-xl font-bold text-sm ${t.done ? 'bg-emerald-200 text-emerald-700' : 'bg-blue-500 text-white shadow-md'}" ${t.done ? 'disabled' : ''}>
-                            ${t.done ? 'Klaar!' : 'Inleveren'}
-                        </button>
-                    </div>`;
-            });
-
-            const hl = document.getElementById('homework-list'); hl.innerHTML = "";
-            currentUser.homework.forEach(h => {
-                hl.innerHTML += `
-                    <div class="p-4 border-2 border-orange-100 rounded-2xl bg-orange-50/50 flex justify-between items-center">
-                        <span class="font-bold text-slate-700 text-sm">${h.title}</span>
-                        <span class="text-[10px] font-bold text-orange-500 uppercase">Voor: ${h.date}</span>
-                    </div>`;
-            });
-        }
-
-        function submitTask(id) {
-            currentUser.tasks.find(t => t.id === id).done = true;
-            const sIdx = users.students.findIndex(s => s.id === currentUser.id);
-            users.students[sIdx] = currentUser;
-            saveDB();
-            renderStudentHub();
-        }
-
-        function broadcastAlertFromInput() {
-            const customText = document.getElementById('live-text-input').value.trim();
-            const message = customText || "Ogen op de leraar! 👀";
-            broadcastAlert(message);
-        }
-
-        function broadcastAlert(msg) {
-            localStorage.setItem('sh_global_alert', msg);
-            alert("Focus-melding verstuurd naar de hele klas!");
-        }
-
-        function saveDB() {
-            localStorage.setItem('sh_db', JSON.stringify(users));
-        }
-
-        function openModule(id) {
+        window.logout = async () => { await signOut(auth); window.location.reload(); };
+        window.showAuthMode = (id) => {
+            document.querySelectorAll('#auth-screen .auth-card').forEach(s => s.classList.add('hidden-section'));
+            document.getElementById(id).classList.remove('hidden-section');
+        };
+        window.closeAlert = () => document.getElementById('live-alert').classList.add('hidden-section');
+        window.openModule = (id) => {
             document.getElementById('hub-main').classList.add('hidden-section');
             document.getElementById('module-' + id).classList.remove('hidden-section');
-            if(id === 'beheer') {
-                const list = document.getElementById('codes-list');
-                list.innerHTML = "";
-                users.students.forEach(s => {
-                    list.innerHTML += `
-                        <div class="flex justify-between items-center p-4 bg-slate-50 rounded-2xl border-2">
-                            <span class="font-bold">${s.name}</span>
-                            <code class="bg-white px-4 py-2 rounded-xl border-2 border-purple-200 font-bold text-purple-600">${s.code}</code>
-                        </div>`;
-                });
-            }
-        }
-
-        function backToHub() {
-            ['beheer', 'huiswerk', 'opdrachten', 'live'].forEach(m => {
-                document.getElementById('module-' + m).classList.add('hidden-section');
-            });
+        };
+        window.backToHub = () => {
+            document.querySelectorAll('[id^="module-"]').forEach(m => m.classList.add('hidden-section'));
             document.getElementById('hub-main').classList.remove('hidden-section');
-            if(currentRole === 'student') renderStudentHub();
-        }
-
-        function logout() { window.location.reload(); }
-        function closeAlert() { document.getElementById('live-alert').classList.add('hidden-section'); }
-
-        // Live alert checker
-        setInterval(() => {
-            const msg = localStorage.getItem('sh_global_alert');
-            if(msg && currentRole === 'student') {
-                document.getElementById('alert-text').innerText = msg;
-                document.getElementById('live-alert').classList.remove('hidden-section');
-                localStorage.removeItem('sh_global_alert');
-            }
-        }, 2000);
+        };
     </script>
 </body>
 </html>
